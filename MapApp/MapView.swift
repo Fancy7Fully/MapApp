@@ -11,6 +11,8 @@ import Combine
 
 struct MapView: View {
     @ObservedObject var locationManager = LocationManager()
+    @ObservedObject var dataService = DataService.shared
+    
     @State private var mapFeature : UUID?
     @State private var isSelected: Bool = false
     
@@ -39,12 +41,10 @@ struct MapView: View {
     
     var map: some View {
         Map(position: $locationManager.cameraPosition.animation(), selection:$mapFeature) {
-            ForEach(locationManager.list) { poi in
-                Marker(poi.name, coordinate: poi.coordinate)
-                    .tint(.orange)
-                    .tag(poi.id)
-                
+            ForEach($dataService.currentPosts) { $post in
+                    Marker(post.title, coordinate: .init(latitude: 40.74205708336585, longitude: -73.93546426277251))
             }
+            
             Annotation("My Home", coordinate: .init(latitude: 40.74800852005587, longitude: -73.94445404565252)) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 5)
@@ -204,7 +204,3 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate, MK
          print("error:: \(error.localizedDescription)")
     }
 }
-
-//#Preview {
-//    MapView()
-//}

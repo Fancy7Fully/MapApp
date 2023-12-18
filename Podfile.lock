@@ -648,6 +648,11 @@ PODS:
   - FBSDKCoreKit_Basics (16.3.1)
   - FBSDKLoginKit (16.3.1):
     - FBSDKCoreKit (= 16.3.1)
+  - Firebase/CoreOnly (10.19.0):
+    - FirebaseCore (= 10.19.0)
+  - Firebase/Storage (10.19.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 10.19.0)
   - FirebaseAnalytics (10.19.0):
     - FirebaseAnalytics/AdIdSupport (= 10.19.0)
     - FirebaseCore (~> 10.0)
@@ -810,6 +815,8 @@ PODS:
     - AppAuth (~> 1.5)
     - GTMAppAuth (~> 1.3)
     - GTMSessionFetcher/Core (< 3.0, >= 1.1)
+  - GoogleSignInSwiftSupport (6.2.4):
+    - GoogleSignIn (~> 6.2)
   - GoogleUtilities/AppDelegateSwizzler (7.12.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -907,6 +914,7 @@ PODS:
   - SDWebImage/Core (5.18.7)
 
 DEPENDENCIES:
+  - Firebase/Storage
   - FirebaseAnalytics
   - FirebaseAuth
   - FirebaseFirestore
@@ -915,6 +923,8 @@ DEPENDENCIES:
   - FirebaseUI/Google
   - FirebaseUI/OAuth
   - FirebaseUI/Phone
+  - GoogleSignIn
+  - GoogleSignInSwiftSupport
 
 SPEC REPOS:
   trunk:
@@ -925,6 +935,7 @@ SPEC REPOS:
     - FBSDKCoreKit
     - FBSDKCoreKit_Basics
     - FBSDKLoginKit
+    - Firebase
     - FirebaseAnalytics
     - FirebaseAnonymousAuthUI
     - FirebaseAppCheckInterop
@@ -951,6 +962,7 @@ SPEC REPOS:
     - FirebaseUI
     - GoogleAppMeasurement
     - GoogleSignIn
+    - GoogleSignInSwiftSupport
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
@@ -970,6 +982,7 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: 5e4dd478947ab1bcc887e8cfadeae0727af1a942
   FBSDKCoreKit_Basics: cd7b5f5d1e8868c26706917919d058999ca672c3
   FBSDKLoginKit: 572cca0bc6c90067ef197187697cb3b584310c52
+  Firebase: 63ce8ece0d43743dc28eacac0c6867a2d7fd5a9d
   FirebaseAnalytics: 87513010b13b7c8610164d3602ea10571f76afc1
   FirebaseAnonymousAuthUI: 03392075a7f79a674b49af1678989ded80e106f2
   FirebaseAppCheckInterop: 37884781f3e16a1ba47e7ec80a1e805f987788e3
@@ -996,6 +1009,7 @@ SPEC CHECKSUMS:
   FirebaseUI: d3e0d3f81f5c464554945195a6133a3ab905b6a7
   GoogleAppMeasurement: 68afe759316673c6554dac35a0c7ae8f5d6cb4ed
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
+  GoogleSignInSwiftSupport: 565fa830a18d4d26d78c7a7c77be096fea7cf22b
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   "gRPC-C++": 2df8cba576898bdacd29f0266d5236fa0e26ba6a
   gRPC-Core: a21a60aefc08c68c247b439a9ef97174b0c54f96
@@ -1007,6 +1021,6 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   SDWebImage: f9258c58221ed854cfa0e2b80ee4033710b1c6d3
 
-PODFILE CHECKSUM: ce5478f4784f3348450fd702036c2bfd4b211627
+PODFILE CHECKSUM: 3d6f28f12fe13fa0633ce7a112b06e8c1d58081d
 
 COCOAPODS: 1.14.3

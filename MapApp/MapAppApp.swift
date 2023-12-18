@@ -9,7 +9,19 @@ import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
+import GoogleSignIn
 import Combine
+
+enum Constants {
+    
+    static func clientId() -> String {
+        let f1 = 4
+        let f2 = 3
+        let f3 = 23
+        let f4 = 55311211
+        return "\(f1 * f2 * f3 * f4)" + "-bt0egbbpafskt9jl13a4i91sf3oqrclo.apps.googleusercontent.com"
+    }
+}
 
 class UserService {
     var handler: AuthStateDidChangeListenerHandle?
@@ -32,9 +44,10 @@ class UserService {
         }
     }
     
-    func createUser(with email: String, password: String) {
+    func createUser(with email: String, password: String, onError: @escaping (Error) -> ()) {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if error != nil {
+            if let error {
+                onError(error)
                 print("error is \(error)")
             } else {
                 print("result is \(result)")
@@ -42,9 +55,10 @@ class UserService {
         }
     }
     
-    func signIn(with email: String, password: String) {
+    func signIn(with email: String, password: String, onError: @escaping (Error) -> ()) {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if error != nil {
+            if let error {
+                onError(error)
                 print("sign in error is \(error)")
             } else {
                 print("sign in result is \(result)")
@@ -65,6 +79,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, ObservableObject {
         FirebaseApp.configure()
         
         return true
+    }
+    
+    func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+      return GIDSignIn.sharedInstance.handle(url)
     }
     
     func printSomething() {

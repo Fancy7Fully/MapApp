@@ -22,6 +22,9 @@
 		8992D8D42B29915600421719 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8992D8D32B29915600421719 /* GoogleService-Info.plist */; };
 		8992D8D92B2ABD3000421719 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8992D8D82B2ABD3000421719 /* SignInView.swift */; };
 		89A5B97E2B2E6D2500A4731F /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A5B97D2B2E6D2500A4731F /* AccountView.swift */; };
+		89A5B9832B2F849400A4731F /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A5B9822B2F849400A4731F /* ResetPasswordView.swift */; };
+		89A5B9852B30006500A4731F /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A5B9842B30006500A4731F /* DataModel.swift */; };
+		89A5B9872B3003FD00A4731F /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89A5B9862B3003FD00A4731F /* DataService.swift */; };
 		98D4FA3BD9002F49B7FA35FE /* Pods_MapApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7236CE21B26C9496C6BA30D8 /* Pods_MapApp.framework */; };
 		A12F9642C051CEBDAEB4AD94 /* Pods_MapAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A90B78FFAA24F3D62431B90B /* Pods_MapAppTests.framework */; };
 		FFC2DE08A91465CE2D3FCD28 /* Pods_MapApp_MapAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B9699A5D61B4CBF0ACC25B2 /* Pods_MapApp_MapAppUITests.framework */; };
@@ -71,6 +74,10 @@
 		8992D8D32B29915600421719 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8992D8D82B2ABD3000421719 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		89A5B97D2B2E6D2500A4731F /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		89A5B9802B2ED3B000A4731F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		89A5B9822B2F849400A4731F /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
+		89A5B9842B30006500A4731F /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		89A5B9862B3003FD00A4731F /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		A90B78FFAA24F3D62431B90B /* Pods_MapAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MapAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9390DCF265B65CF0C97C9A7 /* Pods-MapApp-MapAppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MapApp-MapAppUITests.release.xcconfig"; path = "Target Support Files/Pods-MapApp-MapAppUITests/Pods-MapApp-MapAppUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +145,7 @@
 		89054C242B24F1BD0059B76A /* MapApp */ = {
 			isa = PBXGroup;
 			children = (
+				89A5B9802B2ED3B000A4731F /* Info.plist */,
 				8992D8D32B29915600421719 /* GoogleService-Info.plist */,
 				89054C252B24F1BD0059B76A /* MapAppApp.swift */,
 				89054C272B24F1BD0059B76A /* ContentView.swift */,
@@ -151,6 +159,9 @@
 				8992D8CF2B28339100421719 /* AddPostButton.swift */,
 				8992D8D82B2ABD3000421719 /* SignInView.swift */,
 				89A5B97D2B2E6D2500A4731F /* AccountView.swift */,
+				89A5B9822B2F849400A4731F /* ResetPasswordView.swift */,
+				89A5B9842B30006500A4731F /* DataModel.swift */,
+				89A5B9862B3003FD00A4731F /* DataService.swift */,
 			);
 			path = MapApp;
 			sourceTree = "<group>";
@@ -434,11 +445,14 @@
 			files = (
 				89054C282B24F1BD0059B76A /* ContentView.swift in Sources */,
 				8992D8CA2B24FABC00421719 /* LaunchDelegate.swift in Sources */,
+				89A5B9852B30006500A4731F /* DataModel.swift in Sources */,
+				89A5B9872B3003FD00A4731F /* DataService.swift in Sources */,
 				8992D8C82B24F53300421719 /* MapView.swift in Sources */,
 				8992D8CE2B26E5A500421719 /* Models.swift in Sources */,
 				89054C262B24F1BD0059B76A /* MapAppApp.swift in Sources */,
 				8992D8D02B28339100421719 /* AddPostButton.swift in Sources */,
 				89A5B97E2B2E6D2500A4731F /* AccountView.swift in Sources */,
+				89A5B9832B2F849400A4731F /* ResetPasswordView.swift in Sources */,
 				8992D8D92B2ABD3000421719 /* SignInView.swift in Sources */,
 				8992D8CC2B26E0B700421719 /* SearchListView.swift in Sources */,
 			);
@@ -606,6 +620,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MapApp/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = Always;
 				INFOPLIST_KEY_NSLocationUsageDescription = Use;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "When in use";
@@ -649,6 +664,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MapApp/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = Always;
 				INFOPLIST_KEY_NSLocationUsageDescription = Use;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "When in use";

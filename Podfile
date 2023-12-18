@@ -15,6 +15,10 @@ target 'MapApp' do
   pod 'FirebaseUI/Google'
   pod 'FirebaseUI/OAuth' # Used for Sign in with Apple, Twitter, etc
   pod 'FirebaseUI/Phone'
+  pod 'Firebase/Storage'
+  
+  pod 'GoogleSignIn'
+  pod 'GoogleSignInSwiftSupport'
 
   target 'MapAppTests' do
     inherit! :search_paths
