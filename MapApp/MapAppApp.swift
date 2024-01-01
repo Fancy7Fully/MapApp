@@ -100,9 +100,10 @@ struct MapAppApp: App {
     let launchDelegate = LaunchDelegate()
     
     init() {
-        if !launchDelegate.hasInUseAuthorization {
-            launchDelegate.requestLocationAuthorization()
-        }
+//        if !launchDelegate.hasInUseAuthorization {
+//            launchDelegate.requestLocationAuthorization()
+//        }
+        SharedLocationManager.shared.start()
     }
     
     var body: some Scene {

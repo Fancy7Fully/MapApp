@@ -52,14 +52,35 @@ struct AccountView: View {
             }
         }
         
-        func writeToDoc(_ url: URL) {
-            let newPost = Post(
+        private func randomPost(_ url: URL) -> Post {
+            let rand = Int.random(in: 1...3)
+            if rand == 1 {
+                return Post(
+                    title: "tower 28",
+                    isDummy: false,
+                    description: "This is tower 28",
+                    longitude: -73.93959407611281,
+                    latitude: 40.74961150921874,
+                    imageUrl: url.absoluteString)
+            }
+            
+            if rand == 2 {
+                return Post(title: "knock knock", isDummy: false, description: "This is knock knock", longitude: -73.94216504064606, latitude: 40.74969763124088,
+                            imageUrl: url.absoluteString)
+            }
+            
+            return Post(
                 title: "new post",
                 isDummy: false,
                 description: "This is a new post to the document",
-                longitude:  -73.93546426277251, 
+                longitude:  -73.93546426277251,
                 latitude: 40.74205708336585,
                 imageUrl: url.absoluteString)
+        }
+        
+        func writeToDoc(_ url: URL) {
+            
+            let newPost = randomPost(url)
             if let post = try? newPost.asDictionary() {
                 docRef.updateData([
                     "posts" : FieldValue.arrayUnion([post])

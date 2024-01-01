@@ -15,6 +15,7 @@ struct MapView: View {
     
     @State private var mapFeature : UUID?
     @State private var isSelected: Bool = false
+    @State private var isSheetPresented: Bool = false
     
     @ViewBuilder
     var searchList: some View {
@@ -31,9 +32,8 @@ struct MapView: View {
                     }
                 }
             }
-            .frame(maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-            .scrollContentBackground(.hidden)
             .background(Color.clear)
+            .scrollContentBackground(.hidden)
         } else {
             EmptyView()
         }
@@ -42,7 +42,14 @@ struct MapView: View {
     var map: some View {
         Map(position: $locationManager.cameraPosition.animation(), selection:$mapFeature) {
             ForEach($dataService.currentPosts) { $post in
-                    Marker(post.title, coordinate: .init(latitude: 40.74205708336585, longitude: -73.93546426277251))
+                if let latitude = post.latitude, let longitude = post.longitude {
+                    Marker(post.title, coordinate: .init(latitude: latitude, longitude: longitude))
+                        .tag(post.id)
+                }
+            }
+            
+            ForEach($locationManager.list) { $poi in
+                Marker(poi.name, coordinate: poi.coordinate)
             }
             
             Annotation("My Home", coordinate: .init(latitude: 40.74800852005587, longitude: -73.94445404565252)) {
@@ -60,7 +67,7 @@ struct MapView: View {
             if newCameraPosition != locationManager.userCameraPosition {
                 locationManager.userCameraPosition = newCameraPosition
                 
-                locationManager.searchCompleter.region = .init(context.rect)
+                locationManager.locationService.region = .init(context.rect)
                 locationManager.region = .init(context.rect)
             }
         })
@@ -83,15 +90,19 @@ struct MapView: View {
         NavigationStack {
             ZStack {
                 map
-                    .ignoresSafeArea(.all, edges: .bottom)
+                    .ignoresSafeArea(.keyboard, edges: .bottom)
+                VStack {
+                    searchList
+                    Spacer()
+                }
+                
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
                         AddPostButton(onTap: {
                             isSelected = false
-                            print(locationManager.cameraPosition.camera?.centerCoordinate)
-                            print(locationManager.cameraPosition.camera?.distance)
+                            isSheetPresented = true
                         })
                             .frame(width: 50, height: 50)
                             .padding()
@@ -100,22 +111,84 @@ struct MapView: View {
             }
         }
         .searchable(text: $locationManager.search, isPresented: $isSelected)
-        .searchSuggestions {
-            searchList
+        .sheet(isPresented: $isSheetPresented) {
+            InfoSheet(sheetPresented: $isSheetPresented)
         }
     }
 }
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate, MKLocalSearchCompleterDelegate {
+class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     @Published var shouldShow: Bool = false
     @Published var cameraPosition: MapCameraPosition = MapCameraPosition.automatic
     var userCameraPosition = MapCameraPosition.automatic
     
     @Published var list: [POI] = [
-        .init(name: "Empire State Building", coordinate: .init(latitude: 40.748817, longitude: -73.985428)),
-        .init(name: "Times Square", coordinate: .init(latitude: 40.758896, longitude: -73.985130))
+//        .init(name: "Empire State Building", coordinate: .init(latitude: 40.748817, longitude: -73.985428)),
+//        .init(name: "Times Square", coordinate: .init(latitude: 40.758896, longitude: -73.985130))
     ]
+    
+    let manager = SharedLocationManager.shared
+    var currentLocation: CLLocation?
+    @Published var region: MKCoordinateRegion?
+    @Published var location: CLLocationCoordinate2D?
+    @Published var name: String = ""
+    @Published var search: String = ""
+
+    @Published var searchResults = [MKLocalSearchCompletion]()
+    var publisher: AnyCancellable?
+    var cancellables = Set<AnyCancellable>()
+    
+    let locationService: LocationSearchService = LocationSearchService()
+
+    override init() {
+        super.init()
+        manager.locationPublisher
+            .compactMap { $0 }
+            .sink { error in
+                // do nothing
+            } receiveValue: { [weak self] location in
+                guard let self else { return }
+                self.currentLocation = location
+                self.updateRegionIfNecessary()
+            }
+            .store(in: &cancellables)
+
+        locationService.publisher.sink { error in
+            // do nothing
+        } receiveValue: { [weak self] completions in
+            guard let self else { return }
+            if completions.count < 5 {
+                self.searchResults = completions
+            } else {
+                self.searchResults = Array(completions[0...4])
+            }
+        }
+        .store(in: &cancellables)
+
+//        searchCompleter.delegate = self
+//        searchCompleter.region = self.region
+//
+        self.publisher = $search
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .receive(on: RunLoop.main)
+            .filter { !$0.isEmpty }
+            .sink(receiveValue: { [weak self] (str) in
+//                self?.searchCompleter.queryFragment = str
+                self?.locationService.search(query: str)
+                self?.shouldShow = true
+        })
+    }
+    
+    private func updateRegionIfNecessary() {
+        guard region == nil else { return }
+        guard let location = self.currentLocation else { return }
+        let newRegion = MKCoordinateRegion(center: .init(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude), latitudinalMeters: 500, longitudinalMeters: 500)
+        region = newRegion
+        if locationService.region == nil {
+            locationService.prepareSearch(region: newRegion, resultTypes: [.address, .pointOfInterest])
+        }
+    }
     
     func focusOn(_ id: UUID?) {
         guard let id else { return }
@@ -127,10 +200,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate, MK
     }
     
     func search(_ text: MKLocalSearchCompletion) {
-        let searchRequest = MKLocalSearch.Request()
+        guard let region else { return }
+        search = ""
+        let searchRequest = MKLocalSearch.Request(completion: text)
         // Confine the map search area to an area around the user's current location.
         searchRequest.region = region
-        searchRequest.naturalLanguageQuery = text.title
         
         // Include only point-of-interest results. This excludes results based on address matches.
         searchRequest.resultTypes = .pointOfInterest
@@ -144,6 +218,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate, MK
                 }
                 
                 if let item = response?.mapItems.first, let region = response?.boundingRegion {
+                    self.list.removeAll()
                     self.list.append(.init(name: item.name ?? "Result", coordinate: .init(latitude: item.placemark.coordinate.latitude, longitude: item.placemark.coordinate.longitude)))
                     
                     self.cameraPosition = MapCameraPosition.region(region)
@@ -151,56 +226,5 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate, MK
                 }
             }
         }
-    }
-    
-    let manager = CLLocationManager()
-    @Published var region: MKCoordinateRegion
-    @Published var location: CLLocationCoordinate2D?
-    @Published var name: String = ""
-    @Published var search: String = ""
-
-    @Published var searchResults = [MKLocalSearchCompletion]()
-    var publisher: AnyCancellable?
-    var searchCompleter = MKLocalSearchCompleter()
-
-    override init() {
-        let latitude = 0
-        let longitude = 0
-        self.region = MKCoordinateRegion(center:CLLocationCoordinate2D(latitude:
-                                                                        CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude)), span:
-                                            MKCoordinateSpan(latitudeDelta: 0.25, longitudeDelta: 0.25))
-        super.init()
-        manager.delegate = self
-        searchCompleter.delegate = self
-        searchCompleter.region = self.region
-
-        self.publisher = $search
-            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] (str) in
-                self?.searchCompleter.queryFragment = str
-                self?.shouldShow = true
-        })
-    }
-    
-
-    func requestLocation() {
-        manager.requestLocation()
-    }
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        if completer.results.count < 5 {
-            searchResults = completer.results
-        } else {
-            searchResults = Array(completer.results[0...4])
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        location = locations.first?.coordinate
-        searchCompleter.region = MKCoordinateRegion(center: .init(latitude: location?.longitude ?? 0, longitude: location?.latitude ?? 0), span: .init(latitudeDelta: 0.25, longitudeDelta: 0.25))
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-         print("error:: \(error.localizedDescription)")
     }
 }
